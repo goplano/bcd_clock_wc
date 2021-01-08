@@ -36,8 +36,23 @@ module.exports = {
                 {
                     test: /\.css$/i,
                     use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                }, {
+                    test: /\.(png|jpe?g|gif|svg)$/i,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: {
+                                outputPath: 'assets/img',
+                                name: '[name].[ext]?[contenthash]',
+                            },
+                        },
+                    ],
                 },
+
             ]
-        }
+        },
+    devServer: {
+        publicPath: '/'
+    }
 };
 

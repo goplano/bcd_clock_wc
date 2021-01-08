@@ -1,0 +1,43 @@
+:root {
+    --color_palette: darkred;
+}
+#samp {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: stretch;
+    max-width: 100px;
+    place-items: start;
+}
+
+#samp > div {
+    border: 1px solid gray;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    /*width: 100%;*/
+    display: grid;
+    justify-items: start;
+    align-items: end;
+}
+#samp > div::before {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 0;
+    padding-bottom: calc(100%);
+}
+
+.on {
+    border: 1px solid darkgreen;
+    background-color: greenyellow;
+    box-shadow: 0px 0px 5px 5px rgba(0, 255, 0, 0.2);
+}
+.clock {
+    height: auto;
+    width: 100%;
+    display: flex;
+    gap: 4%;
+    background-color: darkcyan;
+}
