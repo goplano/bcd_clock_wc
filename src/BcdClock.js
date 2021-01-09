@@ -1,5 +1,6 @@
 import BcdDigit from "./BcdDigit";
-export default  class BcdClock extends HTMLElement {
+
+export default class BcdClock extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({mode: "open"});
@@ -14,49 +15,63 @@ export default  class BcdClock extends HTMLElement {
         this.seconds2 = new BcdDigit();
         this.getTime();
     }
+
     getTime() {
         this.time = new Date();
         this.setTime();
     }
+
     hours() {
         return this.time.getHours()
     }
+
     minutes() {
         return this.time.getMinutes()
     }
+
     seconds() {
         return this.time.getSeconds()
     }
+
     disconnectedCallback() {
         clearTimeout(this.timer);
     }
+
     setTime() {
-        this.hours1.value = this.hours() /10;
-        this.hours2.value = this.hours() %10;
-        this.minutes1.value = this.minutes() /10;
-        this.minutes2.value = this.minutes() %10;
-        this.seconds1.value = this.seconds() /10;
-        this.seconds2.value = this.seconds() %10;
+        this.hours1.value = this.hours() / 10;
+        this.hours2.value = this.hours() % 10;
+        this.minutes1.value = this.minutes() / 10;
+        this.minutes2.value = this.minutes() % 10;
+        this.seconds1.value = this.seconds() / 10;
+        this.seconds2.value = this.seconds() % 10;
+        this.title = this.time.toLocaleTimeString();
     }
+
     connectedCallback() {
 
         this.timer = setInterval(this.getTime.bind(this), 1000);
         this.setTime();
         this.shadowRoot.innerHTML = `
 <style>
-.group {
-display:flex;
-flex-direction: row;
-gap: 1vw;
-padding: 1vw;
+:host {
+    height: auto;
+    width: 100%;
+    display: flex;
+    gap: 4%;
+}
+:host([hidden]) {
+    display: none;
+  }
+:host div {
+    display:flex;
+    flex-direction: row;
+    gap: 1vw;
+    padding: 1vw;
 }
 </style>
-<div class="group" id="hours">
-</div>
-<div class="group" id="minutes">    
-</div>
-<div class="group" id="seconds">
-</div>
+<div id="hours"></div>
+<div id="minutes"></div>
+<div id="seconds"></div>
 
 `;
         this.shadowRoot.querySelector("#hours").appendChild(this.hours1);

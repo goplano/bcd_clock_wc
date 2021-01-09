@@ -2,11 +2,14 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InlineChunkHtmlPlugin = require('inline-chunk-html-plugin');
 const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").default;
+const WebpackCleanPlugin = require("webpack-clean");
+
 const path = require('path');
 
 module.exports = {
     entry: {
         main: path.resolve(__dirname, "./src/index.js"),
+        bcdclock: path.resolve(__dirname, "./src/BcdClock.js"),
         critical: path.resolve(__dirname, "./src/critical.js")
     },
     plugins:
@@ -16,19 +19,22 @@ module.exports = {
                 chunkFilename: "[id].css"
             }),
             new HtmlWebpackPlugin({
-                title: "Webpack 101",
-                description: "A brief introduction to webpack",
+                title: "BCD Clock",
+                description: "Web component version of a BCD Clock",
                 template: "src/index.html",
                 inject: true,
             }),
             new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/critical/]),
             new HTMLInlineCSSWebpackPlugin({
                 filter(fileName) {
-                    return !fileName.includes('main');
+                    console.log(fileName, fileName.includes('crit') || fileName.includes('index'));
+                    return fileName.includes('crit') || fileName.includes('index');
                 },
                 leaveCSSFile: false,
-
             }),
+            new WebpackCleanPlugin([
+                'dist/critical.js',
+            ])
         ],
     module:
         {

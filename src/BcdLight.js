@@ -1,28 +1,32 @@
-import light from './assets/img/light.svg';
+import BcdClock from "./BcdClock";
 
 export default class BcdLight extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({mode: "open"});
-        this.max = 9;
     }
 
     connectedCallback() {
+        this._upgradeProperty("on");
         this.shadowRoot.innerHTML = `
 <style>
-.light {
+:host {
+    display:block;
+}
+:host([hidden]) {
+    display: none;
+  }
+:host svg {
     border-radius: 100%;
     background-color: rgba(200, 200, 200, 0.2);
     box-shadow: inset 0 0 0 0 rgba(200, 200, 200, 0.2);
     height: 100%;
     width: 100%;
+    color: inherit;
 }
 </style>
-<div class="light"><svg version="1.1"
-    width="100%"
-    height="100%"
+<svg
      viewBox="0 0 100 100"
-     baseProfile="full"
      xmlns="http://www.w3.org/2000/svg">
     <defs>
         <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -41,17 +45,12 @@ export default class BcdLight extends HTMLElement {
         </clipPath>
     </defs>
     <circlec x="50.5" cy="50.5" r="45" fill="#444"/>
-    <circle  id="on"  cx="50.5" cy="50.5" r="45" fill="#ff0" fill-opacity=".9"  style="fill:var(--color_palette, #ff0);"/>
+    <circle  id="on"  cx="50.5" cy="50.5" r="45" fill="#ff0" fill-opacity=".9"  style="fill: currentColor;"/>
     <ellipse clip-path="url(#myClip)" cx="50.5" cy="80" rx="30" ry="20" fill="url(#grad1)" fill-opacity="0.5" filter="url(#blurMe)" />
     <ellipse clip-path="url(#myClip)" cx="50.5" cy="22" rx="25" ry="15" fill="url(#grad2)" fill-opacity=".5" filter="url(#blurMe)"/>
-
-
-</svg></div>
+</svg>
 `;
-        if (this.on !== "on") {
-            this.shadowRoot.querySelector('#on').setAttribute('display', 'none')
-        }
-
+        this.turnLightOff();
     }
 
     static get observedAttributes() {
@@ -64,12 +63,10 @@ export default class BcdLight extends HTMLElement {
                 // boolean attributes
                 case "on":
                     const elem = this.shadowRoot.querySelector('#on');
-                    if (this.shadowRoot.querySelector('#on')) {
-                        if (newValue === "true") {
-                            this.shadowRoot.querySelector('#on').setAttribute('display', 'block')
-                        } else {
-                            this.shadowRoot.querySelector('#on').setAttribute('display', 'none')
-                        }
+                    if (newValue !== null) {
+                        this.turnLightOn();
+                    } else {
+                        this.turnLightOff();
                     }
                     break;
                 // value attributes
@@ -80,14 +77,33 @@ export default class BcdLight extends HTMLElement {
         }
     }
 
+    turnLightOff() {
+        this.shadowRoot.querySelector('#on').setAttribute('display', 'none')
+    }
+
+    turnLightOn() {
+        this.shadowRoot.querySelector('#on').setAttribute('display', 'block')
+    }
+
     get on() {
-        return this.getAttribute('on');
+        return this.hasAttribute('on');
     }
 
     set on(newValue) {
-        this.setAttribute('on', newValue);
+        const isOn = Boolean(newValue);
+        if (isOn) {
+            this.setAttribute('on', '');
+        } else {
+            this.removeAttribute('on');
+        }
     }
 
+    _upgradeProperty(prop) {
+        if (this.hasOwnProperty(prop)) {
+            let value = this[prop];
+            delete this[prop];
+            this[prop] = value;
+        }
+    }
 }
-
 customElements.define('bcd-light', BcdLight);
