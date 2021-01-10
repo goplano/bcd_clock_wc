@@ -2,4 +2,10 @@
     border-radius: 24px;
     background-color: darkslategray;
     color: lawngreen;
+
+}
+.container {
+    width: 400px;
+    height: auto;
+    display: block;
 }
